@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect
 from movies.models import Movie
 from .utils import calculate_cart_total
 
-def add_to_cart(request, id) :
+def add(request, id):
     get_object_or_404(Movie, id=id)
     cart = request.session.get('cart', {})
     cart[id] = request.POST['quantity']
@@ -16,9 +16,9 @@ def index(request) :
     cart = request.session.get('cart', {})
     movie_ids = list(cart.keys())
     if (movie_ids != []):
-        movies_in_cart =
-        Movie.objects.filter(id__in=movie_ids)
-    cart_total = calculate_cart_total(cart, movies_in_cart)
+        movies_in_cart = Movie.objects.filter(id__in=movie_ids)
+        cart_total = calculate_cart_total(cart, movies_in_cart)
+
     template_data = {}
     template_data['title'] = 'Cart'
     template_data['movies_in_cart'] = movies_in_cart
