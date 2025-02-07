@@ -16,6 +16,6 @@ class Item(models.Model):
     price = models.IntegerField()
     quantity = models.IntegerField()
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    movie = models.ForeignKey('movies.Movie', on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     def __str__(self):
         return str(self.id) + ' - ' + self.movie.name
