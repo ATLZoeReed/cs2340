@@ -40,3 +40,8 @@
     width : fit-content;
     max-height : 400px;
 }
+
+.search {
+    max-width: fit-content;
+    max-height: 10px;
+}
