@@ -11,22 +11,35 @@
 <div class="container mt-4">
     <form method="GET" action="{% url 'home.index' %}">
         <div class="input-group">
-            <input type="text" name="q" class="form-control" placeholder="Search for movies...">
+            <input type="text" name="search" class="form-control" placeholder="Search for movies..." value="{{ template_data.search_term }}">
             <button class="btn btn-primary" type="submit">Search</button>
         </div>
     </form>
 </div>
 
-{% if movies %}
-    <div class="container mt-4">
-        <h3>Search Results:</h3>
-        <ul class="list-group">
-            {% for movie in movies %}
-                <li class="list-group-item">
-                    <a href="{% url 'movies.show' movie.id %}">{{ movie.name }}</a>
-                </li>
+{% if template_data.movies %}
+    <div class="p-3">
+        {% if template_data.type == "search" %}
+            <h3>Search Results:</h3>
+        {% else %}
+            <h3>Recently Added Movies</h3>
+        {% endif %}
+        <div class="row">
+            {% for movie in template_data.movies %}
+            <div class="col-md-4 col-lg-3 mb-2">
+                <div class="p-2 card align-items-center pt-4">
+                    <img src="{{ movie.image.url }}"
+                     class="card-img-top rounded img-card-200" alt="about picture">
+                    <div class="card-body text-center">
+                        <a href="{% url 'movies.show' id=movie.id %}"
+                           class="btn bg-dark text-white">
+                            {{ movie.name }}
+                        </a>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
 {% endif %}
 {% endblock content %}
