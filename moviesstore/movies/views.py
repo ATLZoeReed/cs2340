@@ -5,15 +5,21 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def index(request):
-    search_term = request.GET.get('search')
+    search_term = request.GET.get('search', None)
     if search_term:
         movies = Movie.objects.filter(name__icontains=search_term)
     else:
         movies = Movie.objects.all()
 
-    template_data = {}
-    template_data['title'] = 'Movies'
-    template_data['movies'] = movies
+    # template_data = {}
+    # template_data['title'] = 'Movies'
+    # template_data['movies'] = movies
+    # template_data['search_term'] = search_term
+    template_data = {
+        'title' : 'Movies',
+        'movies' : movies,
+        'search_term' : search_term,
+    }
     return render(request, 'movies/index.html', {'template_data': template_data})
 
 def show(request, id):
