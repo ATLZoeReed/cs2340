@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
-from .forms import CustomUserCreationForm, CustomErrorList
+from .forms import CustomUserCreationForm, CustomErrorList, PasswordResetForm
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib import messages
 
 @login_required
 def logout(request):
@@ -28,7 +28,7 @@ def login(request):
                       {'template_data': template_data})
     else:
         auth_login(request, user)
-        return redirect('accounts.login')
+        return redirect('home.index')
 
 def signup(request):
     template_data = {}
@@ -53,3 +53,34 @@ def orders(request):
     template_data['title'] = 'Orders'
     template_data['orders'] = request.user.order_set.all()
     return render(request, 'accounts/orders.html',{'template_data': template_data})
+
+@login_required
+def password_reset(request):
+    template_data = {}
+    template_data['title'] = 'Password Reset'
+
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            old_password = form.cleaned_data['old_password']
+            new_password = form.cleaned_data['new_password']
+            user = request.user
+            # I think this is where the error is at.
+
+            if not request.user.is_authenticated:
+                messages.error(request, 'You must be logged in to reset your password!')
+                return redirect('login')
+
+            if user.check_password(old_password):
+                user.set_password(new_password)
+                user.save()
+
+                messages.success(request, 'Your password has been successfully updated!')
+                return redirect('home.index')
+            else:
+                messages.error(request, 'Old password is incorrect!')
+        else:
+            messages.error(request, 'Invalid form!')
+    else:
+        form = PasswordResetForm()
+    return render(request, 'accounts/password_reset.html', {'form': form})

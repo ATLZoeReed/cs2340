@@ -1,6 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm
+from django import forms
 from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
+
 class CustomErrorList(ErrorList):
     def __str__(self):
         if not self:
@@ -15,3 +17,7 @@ class CustomUserCreationForm(UserCreationForm):
             self.fields[fieldname].widget.attrs.update(
                 {'class': 'form-control'}
             )
+
+class PasswordResetForm(forms.Form):
+    old_password = forms.CharField(widget=forms.PasswordInput, label='Old Password')
+    new_password = forms.CharField(widget=forms.PasswordInput, label='New Password')
