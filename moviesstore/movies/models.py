@@ -1,6 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
 import datetime
+from accounts.models import CustomUser
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 # Create your models here.
 
@@ -21,7 +23,7 @@ class Review(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     movie = models.ForeignKey(Movie,
     on_delete=models.CASCADE)
-    user = models.ForeignKey(User,
+    user = models.ForeignKey(CustomUser,
     on_delete=models.CASCADE)
 
     def __str__(self):

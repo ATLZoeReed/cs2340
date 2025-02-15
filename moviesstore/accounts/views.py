@@ -3,7 +3,9 @@ from django.contrib.auth import login as auth_login, authenticate, logout as aut
 from .forms import CustomUserCreationForm, CustomErrorList
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 @login_required
 def logout(request):
@@ -47,6 +49,12 @@ def signup(request):
             template_data['form'] = form
             return render(request, 'accounts/signup.html',{'template_data': template_data})
 
+def reset(request):
+    template_data = {}
+    template_data['title'] = 'Reset Password'
+
+    if request.method == 'GET':
+        return render(request, 'accounts/reset.html', {'template_data': template_data})
 @login_required
 def orders(request):
     template_data = {}
