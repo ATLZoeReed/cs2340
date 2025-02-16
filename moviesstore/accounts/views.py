@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
-from .forms import CustomUserCreationForm, CustomErrorList
+from .forms import CustomUserCreationForm, CustomErrorList, CustomPasswordResetForm
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
@@ -43,6 +43,7 @@ def signup(request):
     elif request.method == 'POST':
         form = CustomUserCreationForm(request.POST, error_class=CustomErrorList)
         if form.is_valid():
+            print(request.POST)
             user = form.save()
             auth_login(request, user)
             return redirect('home.index')
@@ -55,12 +56,14 @@ def reset(request):
     template_data['title'] = 'Reset Password'
 
     if request.method == 'GET':
+        # template_data['form'] = CustomPasswordResetForm()
+        # print(template_data['form'])
         return render(request, 'accounts/reset.html', {'template_data': template_data})
 
     elif request.method == 'POST':
         username = request.POST['username']
         new_password = request.POST['new_password']
-        security_answer = request.POST['security_question_answer']
+        security_answer = request.POST['security_answer']
 
         print(security_answer)
 
