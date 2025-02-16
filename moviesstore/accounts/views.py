@@ -4,6 +4,7 @@ from .forms import CustomUserCreationForm, CustomErrorList
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from .models import CustomUser
 
 User = get_user_model()
 
@@ -55,6 +56,35 @@ def reset(request):
 
     if request.method == 'GET':
         return render(request, 'accounts/reset.html', {'template_data': template_data})
+
+    elif request.method == 'POST':
+        username = request.POST['username']
+        new_password = request.POST['new_password']
+        security_answer = request.POST['security_question_answer']
+
+        print(security_answer)
+
+        try:
+            user = CustomUser.objects.get(username=username)
+            print(user.security_answer)
+
+            if user.security_answer == security_answer:
+                print("Valid Password")
+                user.set_password(new_password)
+                user.save()
+
+                print("Success!!")
+                template_data['error'] = 'Success!'
+
+                return redirect('home.index')
+            else:
+                print("Invalid security answer")
+                template_data['error'] = 'Invalid security question or answer.'
+        except User.DoesNotExist:
+            print("Doesn't exist :(")
+            template_data['error'] = 'User does not exist.'
+    return render(request, 'accounts/reset.html', template_data)
+
 @login_required
 def orders(request):
     template_data = {}
