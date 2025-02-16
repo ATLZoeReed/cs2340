@@ -86,7 +86,7 @@ def reset(request):
         except User.DoesNotExist:
             print("Doesn't exist :(")
             template_data['error'] = 'User does not exist.'
-    return render(request, 'accounts/reset.html', template_data)
+    return render(request, 'accounts/reset.html', {'template_data': template_data})
 
 @login_required
 def orders(request):
