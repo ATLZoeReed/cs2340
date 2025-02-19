@@ -4,6 +4,8 @@ from django.utils.safestring import mark_safe
 from django import forms
 from django.contrib.auth.forms import PasswordResetForm
 from .models import CustomUser
+from django.core.validators import MinLengthValidator
+from django.core.validators import MaxLengthValidator
 
 class CustomErrorList(ErrorList):
     def __str__(self):
@@ -31,10 +33,27 @@ class CustomUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
         self.fields['username'].label = 'Username'
+        self.fields['username'].validators.append(
+            MinLengthValidator(6, "Username must be at least 6 characters long."))
+        self.fields['username'].validators.append(
+            MaxLengthValidator(32, "Username must be at most 32 characters long."))
         self.fields['password1'].label = 'Password'
+        self.fields['password1'].validators.append(
+            MinLengthValidator(8, "New password must be at least 8 characters long."))
+        self.fields['password1'].validators.append(
+            MaxLengthValidator(32, "New password must be at most 32 characters long."))
         self.fields['password2'].label = 'Confirm Password'
+        self.fields['password2'].validators.append(
+            MinLengthValidator(8, "New password must be at least 8 characters long."))
+        self.fields['password2'].validators.append(
+            MaxLengthValidator(32, "New password must be at most 32 characters long."))
         self.fields['security_question'].label = 'Security Question'
         self.fields['security_answer'].label = 'Security Question Answer'
+        self.fields['security_answer'].validators.append(
+            MinLengthValidator(3, "Security question answer must be at most 3 characters long."))
+        self.fields['security_answer'].validators.append(
+            MaxLengthValidator(64, "Security question answer must be at most 64 characters long."))
+
 
         for field in self.fields:
             self.fields[field].widget.attrs.update(

@@ -56,35 +56,33 @@ def reset(request):
     template_data['title'] = 'Reset Password'
 
     if request.method == 'GET':
-        # template_data['form'] = CustomPasswordResetForm()
-        # print(template_data['form'])
         return render(request, 'accounts/reset.html', {'template_data': template_data})
 
     elif request.method == 'POST':
         username = request.POST['username']
         new_password = request.POST['new_password']
+        security_question = request.POST['security_question']
         security_answer = request.POST['security_answer']
-
-        print(security_answer)
 
         try:
             user = CustomUser.objects.get(username=username)
-            print(user.security_answer)
 
-            if user.security_answer == security_answer:
-                print("Valid Password")
-                user.set_password(new_password)
-                user.save()
+            if user.security_question == security_question:
+                if user.security_answer == security_answer:
+                    if not user.check_password(new_password):
+                        user.set_password(new_password)
+                        user.save()
 
-                print("Success!!")
-                template_data['error'] = 'Success!'
+                        template_data['error'] = 'Success!'
 
-                return redirect('home.index')
+                        return redirect('home.index')
+                    else:
+                        template_data['error'] = "New password must not match previous password."
+                else:
+                    template_data['error'] = 'Invalid security question or answer.'
             else:
-                print("Invalid security answer")
-                template_data['error'] = 'Invalid security question or answer.'
+                    template_data['error'] = 'Invalid security question or answer.'
         except User.DoesNotExist:
-            print("Doesn't exist :(")
             template_data['error'] = 'User does not exist.'
     return render(request, 'accounts/reset.html', {'template_data': template_data})
 
